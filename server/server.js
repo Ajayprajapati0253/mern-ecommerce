@@ -5,6 +5,9 @@ const cors = require("cors");
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
+const videoRoutes = require("./routes/videoRoutes");
+
+const verifyToken = require("./middleware/authMiddleware");
 
 const app = express();
 
@@ -15,9 +18,21 @@ app.use(express.json());
 // Routes
 app.use("/api/auth",authRoutes);
 
+app.use("/api/videos", videoRoutes);
+
 // Test route
 app.get("/",(req,res) => {
     res.send("API running successfully");
+});
+
+
+
+
+app.get("/protected", verifyToken, (req, res) => {
+  res.json({
+    message: "Protected route accessed",
+    user: req.user,
+  });
 });
 
 // Port
