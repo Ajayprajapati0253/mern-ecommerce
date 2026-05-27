@@ -1,6 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+import { registerUser } from "../services/authService";
+
+
 function Register() {
   const navigate = useNavigate();
 
@@ -20,26 +23,53 @@ function Register() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setError("");
+  setError("");
 
-    // Validation
-    if (formData.password.length < 6) {
-      return setError("Password must be at least 6 characters");
-    }
+  // Validation
+  if (
+    !formData.name ||
+    !formData.email ||
+    !formData.password ||
+    !formData.confirmPassword
+  ) {
+    return setError("All fields are required");
+  }
 
-    if (formData.password !== formData.confirmPassword) {
-      return setError("Passwords do not match");
-    }
+  if (formData.password.length < 6) {
+    return setError(
+      "Password must be at least 6 characters"
+    );
+  }
 
-    console.log(formData);
+  if (formData.password !== formData.confirmPassword) {
+    return setError("Passwords do not match");
+  }
 
-    // Future API Call Here
+  try {
 
-    navigate("/dashboard");
-  };
+    const userData = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+    };
+
+    const data = await registerUser(userData);
+
+    console.log(data);
+
+    navigate("/");
+
+  } catch (error) {
+
+    setError(
+      error.response?.data?.message ||
+      "Registration failed"
+    );
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
