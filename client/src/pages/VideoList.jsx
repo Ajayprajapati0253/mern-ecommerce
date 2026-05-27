@@ -1,49 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 import { Link } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
+import {
+  getVideos,
+  deleteVideo,
+} from "../services/videoService";
+
 function VideoList() {
 
-  // Dummy Video Data
-  const [videos, setVideos] = useState([
-    {
-      _id: 1,
-      title: "React Tutorial",
-      description: "Learn React basics",
-      thumbnail:
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
-      category: "Frontend",
-    },
-
-    {
-      _id: 2,
-      title: "Node.js Basics",
-      description: "Backend fundamentals",
-      thumbnail:
-        "https://images.unsplash.com/photo-1555066931-4365d14bab8c",
-      category: "Backend",
-    },
-
-    {
-      _id: 3,
-      title: "MongoDB Guide",
-      description: "Database learning",
-      thumbnail:
-        "https://images.unsplash.com/photo-1544383835-bda2bc66a55d",
-      category: "Database",
-    },
-  ]);
+  const [videos, setVideos] = useState([]);
 
   const [search, setSearch] = useState("");
 
-  // Delete Function
-  const handleDelete = (id) => {
-    const filteredVideos = videos.filter((video) => video._id !== id);
 
-    setVideos(filteredVideos);
-  };
+   useEffect(() => {
+
+    fetchVideos();
+
+  }, []);
+
+  const fetchVideos = async () => {
+  try {
+
+    const data = await getVideos();
+
+    setVideos(data);
+
+  } catch (error) {
+
+    console.log(error);
+  }
+};
+
+
+  // Delete Function
+ const handleDelete = async (id) => {
+  try {
+
+    await deleteVideo(id);
+
+    fetchVideos();
+
+  } catch (error) {
+
+    console.log(error);
+  }
+};
 
   // Search Filter
   const filteredVideos = videos.filter((video) =>

@@ -1,6 +1,9 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+import { createVideo } from "../services/videoService";
+
+
 
 function AddVideo() {
   const [formData, setFormData] = useState({
@@ -20,26 +23,44 @@ function AddVideo() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setError("");
+  setError("");
 
-    // Validation
-    if (
-      !formData.title ||
-      !formData.description ||
-      !formData.thumbnail ||
-      !formData.videoUrl ||
-      !formData.category
-    ) {
-      return setError("All fields are required");
-    }
+  // Validation
+  if (
+    !formData.title ||
+    !formData.description ||
+    !formData.thumbnail ||
+    !formData.videoUrl ||
+    !formData.category
+  ) {
+    return setError("All fields are required");
+  }
 
-    console.log(formData);
+  try {
 
-    // Future API call here
-  };
+    await createVideo(formData);
+
+    alert("Video added successfully");
+
+    setFormData({
+      title: "",
+      description: "",
+      thumbnail: "",
+      videoUrl: "",
+      category: "",
+    });
+
+  } catch (error) {
+
+    setError(
+      error.response?.data?.message ||
+      "Failed to add video"
+    );
+  }
+};
 
   return (
     <div className="flex bg-gray-100 min-h-screen">

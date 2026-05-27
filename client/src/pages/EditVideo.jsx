@@ -1,8 +1,17 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+import {
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+
+import {
+  getSingleVideo,
+  updateVideo,
+} from "../services/videoService";
 
 function EditVideo() {
 
@@ -10,17 +19,34 @@ function EditVideo() {
 
   const navigate = useNavigate();
 
-  // Dummy Existing Data
   const [formData, setFormData] = useState({
-    title: "React Tutorial",
-    description: "Learn React basics",
-    thumbnail:
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
-    videoUrl: "https://youtube.com",
-    category: "Frontend",
-  });
+  title: "",
+  description: "",
+  thumbnail: "",
+  videoUrl: "",
+  category: "",
+});
 
   const [error, setError] = useState("");
+
+  useEffect(() => {
+
+    fetchVideo();
+
+  }, []);
+
+  const fetchVideo = async () => {
+  try {
+
+    const data = await getSingleVideo(id);
+
+    setFormData(data);
+
+  } catch (error) {
+
+    console.log(error);
+  }
+};
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -31,28 +57,37 @@ function EditVideo() {
   };
 
   // Update Function
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setError("");
+  setError("");
 
-    // Validation
-    if (
-      !formData.title ||
-      !formData.description ||
-      !formData.thumbnail ||
-      !formData.videoUrl ||
-      !formData.category
-    ) {
-      return setError("All fields are required");
-    }
+  if (
+    !formData.title ||
+    !formData.description ||
+    !formData.thumbnail ||
+    !formData.videoUrl ||
+    !formData.category
+  ) {
+    return setError("All fields are required");
+  }
 
-    console.log("Updated Video:", formData);
+  try {
 
-    // Future API Update Here
+    await updateVideo(id, formData);
+
+    alert("Video updated successfully");
 
     navigate("/videos");
-  };
+
+  } catch (error) {
+
+    setError(
+      error.response?.data?.message ||
+      "Update failed"
+    );
+  }
+};
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
