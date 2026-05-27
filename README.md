@@ -113,7 +113,7 @@ JWT_SECRET=your_secret_key
 ## 1. Clone Repository
 
 ```bash
-git clone YOUR_GITHUB_REPO_LINK
+git clone https://github.com/Ajayprajapati0253/mern-ecommerce.git
 ```
 
 ---
