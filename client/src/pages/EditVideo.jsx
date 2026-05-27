@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 import {
   useNavigate,
@@ -76,16 +77,16 @@ function EditVideo() {
 
     await updateVideo(id, formData);
 
-    alert("Video updated successfully");
+    toast.success("Video updated successfully");
 
     navigate("/videos");
 
   } catch (error) {
 
-    setError(
-      error.response?.data?.message ||
-      "Update failed"
-    );
+    toast.error(
+  error.response?.data?.message ||
+  "Update failed"
+);
   }
 };
 

@@ -3,6 +3,8 @@ import { useState } from "react";
 
 import { loginUser } from "../services/authService";
 
+import toast from "react-hot-toast";
+
 function Login() {
 
   const navigate = useNavigate();
@@ -41,7 +43,7 @@ function Login() {
       // API Call
       const data = await loginUser(formData);
 
-      console.log(data);
+      toast.success("Login successful");
 
       // Store Token
       localStorage.setItem("token", data.token);
@@ -57,10 +59,10 @@ function Login() {
 
     } catch (error) {
 
-      setError(
-        error.response?.data?.message ||
-        "Login failed"
-      );
+      toast.error(
+  error.response?.data?.message ||
+  "Login failed"
+);
     }
   };
 

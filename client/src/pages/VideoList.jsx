@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
+import toast from "react-hot-toast";
+
 import {
   getVideos,
   deleteVideo,
@@ -42,12 +44,13 @@ function VideoList() {
   try {
 
     await deleteVideo(id);
-
+    toast.success("Video deleted successfully");
     fetchVideos();
 
   } catch (error) {
 
     console.log(error);
+    toast.error("Failed to delete video");
   }
 };
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { createVideo } from "../services/videoService";
-
+import toast from "react-hot-toast";
 
 
 function AddVideo() {
@@ -43,7 +43,7 @@ function AddVideo() {
 
     await createVideo(formData);
 
-    alert("Video added successfully");
+    toast.success("Video added successfully");
 
     setFormData({
       title: "",
@@ -55,10 +55,10 @@ function AddVideo() {
 
   } catch (error) {
 
-    setError(
-      error.response?.data?.message ||
-      "Failed to add video"
-    );
+    toast.error(
+  error.response?.data?.message ||
+  "Failed to add video"
+);
   }
 };
 
