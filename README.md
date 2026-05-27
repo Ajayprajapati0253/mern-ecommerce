@@ -17,10 +17,10 @@ This platform allows users to:
 # Live Demo
 
 Frontend Live Link:  
-PASTE_FRONTEND_LINK_HERE
+[PASTE_FRONTEND_LINK_HERE](https://mern-ecommerce-gamma-murex.vercel.app)
 
 Backend Live Link:  
-PASTE_BACKEND_LINK_HERE
+[PASTE_BACKEND_LINK_HERE](https://video-learning-backend.onrender.com)
 
 ---
 
