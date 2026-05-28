@@ -23,80 +23,72 @@ function Register() {
     });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  setError("");
+    setError("");
 
-  // Validation
-  if (
-    !formData.name ||
-    !formData.email ||
-    !formData.password ||
-    !formData.confirmPassword
-  ) {
-    return setError("All fields are required");
-  }
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      return setError("All fields are required");
+    }
 
-  if (formData.password.length < 6) {
-    return setError(
-      "Password must be at least 6 characters"
-    );
-  }
+    if (formData.password.length < 6) {
+      return setError(
+        "Password must be at least 6 characters"
+      );
+    }
 
-  if (formData.password !== formData.confirmPassword) {
-    return setError("Passwords do not match");
-  }
+    if (formData.password !== formData.confirmPassword) {
+      return setError("Passwords do not match");
+    }
 
-  try {
+    try {
+      const userData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      };
 
-    const userData = {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-    };
+      const data = await registerUser(userData);
 
-    const data = await registerUser(userData);
+      toast.success("Registration successful");
 
-    toast.success("Registration successful");
+      localStorage.setItem("token", data.token);
 
-    navigate("/");
-
-  } catch (error) {
-
-    toast.error(
-  error.response?.data?.message ||
-  "Registration failed"
-);
-  }
-};
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+        "Registration failed"
+      );
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
-
-        {/* Heading */}
-        <h1 className="text-3xl font-bold text-center text-blue-600 mb-2">
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-8 sm:px-6">
+      <div className="w-full max-w-md rounded-lg bg-white p-5 shadow-lg ring-1 ring-gray-200 sm:p-8">
+        <h1 className="mb-2 text-center text-2xl font-bold text-blue-600 sm:text-3xl">
           Create Account
         </h1>
 
-        <p className="text-gray-500 text-center mb-6">
+        <p className="mb-6 text-center text-sm text-gray-500 sm:text-base">
           Register to continue
         </p>
 
-        {/* Error Message */}
         {error && (
-          <div className="bg-red-100 text-red-600 px-4 py-3 rounded-lg mb-4">
+          <div className="mb-4 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-600">
             {error}
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-
-          {/* Name */}
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           <div>
-            <label className="block mb-2 font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Name
             </label>
 
@@ -106,14 +98,13 @@ function Register() {
               placeholder="Enter your name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="min-h-12 w-full rounded-lg border border-gray-300 px-4 text-base outline-none transition focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
-          {/* Email */}
           <div>
-            <label className="block mb-2 font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Email
             </label>
 
@@ -123,14 +114,13 @@ function Register() {
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="min-h-12 w-full rounded-lg border border-gray-300 px-4 text-base outline-none transition focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
-          {/* Password */}
           <div>
-            <label className="block mb-2 font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Password
             </label>
 
@@ -140,14 +130,13 @@ function Register() {
               placeholder="Enter password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="min-h-12 w-full rounded-lg border border-gray-300 px-4 text-base outline-none transition focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
-          {/* Confirm Password */}
           <div>
-            <label className="block mb-2 font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Confirm Password
             </label>
 
@@ -157,26 +146,24 @@ function Register() {
               placeholder="Confirm password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="min-h-12 w-full rounded-lg border border-gray-300 px-4 text-base outline-none transition focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition duration-300"
+            className="min-h-12 w-full rounded-lg bg-blue-600 px-4 font-semibold text-white transition duration-300 hover:bg-blue-700"
           >
             Register
           </button>
         </form>
 
-        {/* Login Link */}
-        <p className="text-center text-gray-600 mt-6">
+        <p className="mt-6 text-center text-sm text-gray-600 sm:text-base">
           Already have an account?{" "}
           <Link
             to="/"
-            className="text-blue-600 font-semibold hover:underline"
+            className="font-semibold text-blue-600 hover:underline"
           >
             Login
           </Link>

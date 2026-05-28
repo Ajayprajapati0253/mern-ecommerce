@@ -6,8 +6,7 @@ import {
   useParams,
 } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
+import AppLayout from "../components/AppLayout";
 
 import {
   getSingleVideo,
@@ -15,41 +14,38 @@ import {
 } from "../services/videoService";
 
 function EditVideo() {
-
   const { id } = useParams();
 
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-  title: "",
-  description: "",
-  thumbnail: "",
-  videoUrl: "",
-  category: "",
-});
+    title: "",
+    description: "",
+    thumbnail: "",
+    videoUrl: "",
+    category: "",
+  });
 
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let isActive = true;
 
-    fetchVideo();
+    getSingleVideo(id)
+      .then((data) => {
+        if (isActive) {
+          setFormData(data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
-  }, []);
+    return () => {
+      isActive = false;
+    };
+  }, [id]);
 
-  const fetchVideo = async () => {
-  try {
-
-    const data = await getSingleVideo(id);
-
-    setFormData(data);
-
-  } catch (error) {
-
-    console.log(error);
-  }
-};
-
-  // Handle Input Change
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -57,170 +53,136 @@ function EditVideo() {
     });
   };
 
-  // Update Function
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  setError("");
+    setError("");
 
-  if (
-    !formData.title ||
-    !formData.description ||
-    !formData.thumbnail ||
-    !formData.videoUrl ||
-    !formData.category
-  ) {
-    return setError("All fields are required");
-  }
+    if (
+      !formData.title ||
+      !formData.description ||
+      !formData.thumbnail ||
+      !formData.videoUrl ||
+      !formData.category
+    ) {
+      return setError("All fields are required");
+    }
 
-  try {
+    try {
+      await updateVideo(id, formData);
 
-    await updateVideo(id, formData);
+      toast.success("Video updated successfully");
 
-    toast.success("Video updated successfully");
-
-    navigate("/videos");
-
-  } catch (error) {
-
-    toast.error(
-  error.response?.data?.message ||
-  "Update failed"
-);
-  }
-};
+      navigate("/videos");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+        "Update failed"
+      );
+    }
+  };
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <AppLayout>
+      <div className="mx-auto w-full max-w-3xl rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 sm:p-8">
+        <h1 className="mb-2 text-2xl font-bold text-gray-800 sm:text-3xl">
+          Edit Video
+        </h1>
 
-      {/* Sidebar */}
-      <Sidebar />
+        <p className="mb-6 break-all text-sm text-gray-500 sm:text-base">
+          Editing Video ID: {id}
+        </p>
 
-      {/* Main */}
-      <div className="flex-1">
-
-        {/* Navbar */}
-        <Navbar />
-
-        {/* Content */}
-        <div className="p-6">
-
-          <div className="max-w-3xl mx-auto bg-white shadow-md rounded-xl p-8">
-
-            {/* Heading */}
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              Edit Video
-            </h1>
-
-            <p className="text-gray-500 mb-6">
-              Editing Video ID: {id}
-            </p>
-
-            {/* Error */}
-            {error && (
-              <div className="bg-red-100 text-red-600 px-4 py-3 rounded-lg mb-5">
-                {error}
-              </div>
-            )}
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-5">
-
-              {/* Title */}
-              <div>
-                <label className="block mb-2 font-medium text-gray-700">
-                  Video Title
-                </label>
-
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              {/* Description */}
-              <div>
-                <label className="block mb-2 font-medium text-gray-700">
-                  Description
-                </label>
-
-                <textarea
-                  name="description"
-                  rows="4"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-                ></textarea>
-              </div>
-
-              {/* Thumbnail */}
-              <div>
-                <label className="block mb-2 font-medium text-gray-700">
-                  Thumbnail URL
-                </label>
-
-                <input
-                  type="text"
-                  name="thumbnail"
-                  value={formData.thumbnail}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              {/* Video URL */}
-              <div>
-                <label className="block mb-2 font-medium text-gray-700">
-                  Video URL
-                </label>
-
-                <input
-                  type="text"
-                  name="videoUrl"
-                  value={formData.videoUrl}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              {/* Category */}
-              <div>
-                <label className="block mb-2 font-medium text-gray-700">
-                  Category
-                </label>
-
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="Frontend">Frontend</option>
-
-                  <option value="Backend">Backend</option>
-
-                  <option value="Full Stack">Full Stack</option>
-
-                  <option value="Database">Database</option>
-                </select>
-              </div>
-
-              {/* Button */}
-              <button
-                type="submit"
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition duration-300"
-              >
-                Update Video
-              </button>
-
-            </form>
+        {error && (
+          <div className="mb-5 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-600 sm:text-base">
+            {error}
           </div>
-        </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
+              Video Title
+            </label>
+
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className="min-h-12 w-full rounded-lg border border-gray-300 px-4 text-base outline-none transition focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
+              Description
+            </label>
+
+            <textarea
+              name="description"
+              rows="4"
+              value={formData.description}
+              onChange={handleChange}
+              className="min-h-32 w-full resize-y rounded-lg border border-gray-300 px-4 py-3 text-base outline-none transition focus:ring-2 focus:ring-blue-500"
+            ></textarea>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
+              Thumbnail URL
+            </label>
+
+            <input
+              type="text"
+              name="thumbnail"
+              value={formData.thumbnail}
+              onChange={handleChange}
+              className="min-h-12 w-full rounded-lg border border-gray-300 px-4 text-base outline-none transition focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
+              Video URL
+            </label>
+
+            <input
+              type="text"
+              name="videoUrl"
+              value={formData.videoUrl}
+              onChange={handleChange}
+              className="min-h-12 w-full rounded-lg border border-gray-300 px-4 text-base outline-none transition focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
+              Category
+            </label>
+
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              className="min-h-12 w-full rounded-lg border border-gray-300 px-4 text-base outline-none transition focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Frontend">Frontend</option>
+              <option value="Backend">Backend</option>
+              <option value="Full Stack">Full Stack</option>
+              <option value="Database">Database</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="min-h-12 w-full rounded-lg bg-green-600 px-4 font-semibold text-white transition duration-300 hover:bg-green-700"
+          >
+            Update Video
+          </button>
+        </form>
       </div>
-    </div>
+    </AppLayout>
   );
 }
 

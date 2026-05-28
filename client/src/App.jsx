@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import Login from "./pages/Login";
 import VideoList from "./pages/VideoList";
@@ -10,47 +11,61 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+    <>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          className: "max-w-[calc(100vw-2rem)]",
+        }}
+      />
 
-        <Route
-          path="/add-video"
-          element={
-            <ProtectedRoute>
-              <AddVideo />
-            </ProtectedRoute>
-          }
-        />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Login />} />
 
-        <Route
-          path="/videos"
-          element={
-            <ProtectedRoute>
-              <VideoList />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/register"
+            element={<Register />}
+          />
 
-        <Route
-          path="/edit-video/:id"
-          element={
-            <ProtectedRoute>
-              <EditVideo />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/add-video"
+            element={
+              <ProtectedRoute>
+                <AddVideo />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/videos"
+            element={
+              <ProtectedRoute>
+                <VideoList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/edit-video/:id"
+            element={
+              <ProtectedRoute>
+                <EditVideo />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 

@@ -1,9 +1,6 @@
 const express = require("express");
 
-const router = express.Router();
-
 const verifyToken = require("../middleware/authMiddleware");
-
 const {
   createVideo,
   getAllVideos,
@@ -12,25 +9,17 @@ const {
   deleteVideo,
 } = require("../controllers/videoController");
 
+const router = express.Router();
 
-// GET ALL VIDEOS
-router.get("/", getAllVideos);
+router
+  .route("/")
+  .get(getAllVideos)
+  .post(verifyToken, createVideo);
 
-
-// GET SINGLE VIDEO
-router.get("/:id", getSingleVideo);
-
-
-// CREATE VIDEO (Protected)
-router.post("/", verifyToken, createVideo);
-
-
-// UPDATE VIDEO (Protected)
-router.put("/:id", verifyToken, updateVideo);
-
-
-// DELETE VIDEO (Protected)
-router.delete("/:id", verifyToken, deleteVideo);
-
+router
+  .route("/:id")
+  .get(getSingleVideo)
+  .put(verifyToken, updateVideo)
+  .delete(verifyToken, deleteVideo);
 
 module.exports = router;
